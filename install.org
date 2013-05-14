@@ -1,3 +1,7 @@
+Sorry for non french speaker, I will translate this asap.
+
+Note that the fourbit adder sample is not mine but borrowed from the course available on
+http://www.dejazzer.com/ee478/
 
 * Installation des outils de développement
   Télécharger ISE 14.x sur le site de Xilinx et installer ISE Webpack
