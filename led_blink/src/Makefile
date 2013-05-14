@@ -5,13 +5,21 @@ DEVICE=xc6slx45-3csg324
 PROJECT=led_blink.prj
 # The name of the top module vhdl file
 TOP_MODULE=clock_divider
-
+# VHDL source files
 VHDL=$(wildcard *.vhd)
+# Name of the output image
+OUTPUT=$(PROJECT:.prj=.bit)
+
+
+# You should not have to edit anything beyond this line
+
+
 NGC=$(PROJECT:.prj=.ngc)
 NGD=$(PROJECT:.prj=.ngd)
 UCF=$(PROJECT:.prj=.ucf)
+NCD=$(PROJECT:.prj=.ncd)
+PAR_NCD=$(PROJECT:.prj=_par.ncd)
 
-OUTPUT=$(PROJECT:.prj=.bit)
 
 .PHONY: $(PROJECT)
 
@@ -33,12 +41,18 @@ $(NGC): $(PROJECT)
 	echo "run -ifn $< -ofn $@ -p $(DEVICE) -opt_mode Speed -opt_level 1 -top $(TOP_MODULE)" | xst
 to_clean+=$(NGC) xst _xmsgs $(PROJECT:.prj=.ngc_xst.xrpt) $(VHDL:.vhd=.lso)
 
+# This rule decomposes the synthesized design into FPGA elements
+# (flip-flops, gates...)
 $(NGD): $(UCF) $(NGC) 
 	ngdbuild -p $(DEVICE) -uc $^
 to_clean+=$(NGD:.ngd=_ngdbuild.xrpt) $(NGD) $(NGD:.ngd=.bld) netlist.lst xlnx_auto_0_xdb
 
-%.ncd: %.ngd
+# This rule maps the previously made generic elements to the specific elements
+# of the target
+$(NCD): $(NGD)
 	map -detail -pr b $^
+to_clean+=$(NCD) $(NCD:.ncd=.map) $(NCD:.ncd=.mrp) $(NCD:.ncd=.ngm) $(NCD:.ncd=.pcf) $(NCD:.ncd=_summary.xml) $(NCD:.ncd=_usage.xml) $(VHDL:.vhd=_map.xrpt)
+
 parout.ncd: counter.ncd
 	par counter.ncd parout.ncd counter.pcf
 counter.bit: parout.ncd
