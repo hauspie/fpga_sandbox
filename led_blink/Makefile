@@ -10,4 +10,4 @@ VHDL=$(wildcard *.vhd)
 # Name of the output image
 OUTPUT=$(PROJECT:.prj=.bit)
 
-include ../../vhdl.mk
+include ../vhdl.mk
