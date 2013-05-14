@@ -21,7 +21,7 @@ NCD=$(PROJECT:.prj=.ncd)
 PAR_NCD=$(PROJECT:.prj=_par.ncd)
 
 
-.PHONY: $(PROJECT)
+#.PHONY: $(PROJECT)
 
 all: $(OUTPUT)
 
@@ -50,21 +50,19 @@ to_clean+=$(NGD:.ngd=_ngdbuild.xrpt) $(NGD) $(NGD:.ngd=.bld) netlist.lst xlnx_au
 # This rule maps the previously made generic elements to the specific elements
 # of the target
 $(NCD): $(NGD)
-	map -detail -pr b $^
+	map -detail -pr b -w $^
 to_clean+=$(NCD) $(NCD:.ncd=.map) $(NCD:.ncd=.mrp) $(NCD:.ncd=.ngm) $(NCD:.ncd=.pcf) $(NCD:.ncd=_summary.xml) $(NCD:.ncd=_usage.xml) $(VHDL:.vhd=_map.xrpt)
 
 # Place and route to fully route fpga design
 $(PAR_NCD): $(NCD)
-	par $^ $@ $(NCD:.ncd=.pcf)
+	par -w $^ $@ $(NCD:.ncd=.pcf)
 to_clean+=$(PAR_NCD) $(VHDL:.vhd=_par.xrpt) $(PAR_NCD:.ncd=.pad) $(PAR_NCD:.ncd=_pad.csv) $(PAR_NCD:.ncd=_pad.txt) $(PAR_NCD:.ncd=.par) $(PAR_NCD:.ncd=.ptwx) $(PAR_NCD:.ncd=.unroutes) $(PAR_NCD:.ncd=.xpi) par_usage_statistics.html
 
-counter.bit: parout.ncd
-	bitgen -g CRC:Enable -g StartUpClk:CClk -g Compress \
-	parout.ncd counter.bit counter.pcf
-counter.bin: counter.bit
-	promgen -w -p bin -o counter.bin -u 0 counter.bit
-install: counter.bin
-	stty --file=/dev/ttyUSB0 -opost # We want raw output
-	cat counter.bin > /dev/ttyUSB0
+$(OUTPUT): $(PAR_NCD)
+	bitgen -w -g CRC:Enable -g StartUpClk:CClk -g Compress $^ $@ $(PROJECT:.prj=.pcf)
+
+program: $(OUTPUT)
+	djtgcfg prog -d Atlys -i 0 -f $(OUTPUT)
+
 clean:
 	rm -rf $(to_clean)

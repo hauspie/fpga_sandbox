@@ -35,7 +35,7 @@ entity clock_divider is
 end clock_divider;
 
 architecture Behavioral of clock_divider is
-constant TIMECONST : integer := 10000000;
+constant TIMECONST : integer := 100000000;
 signal count : integer range 0 to 100000000;
 signal D : std_logic := '0';
 begin
