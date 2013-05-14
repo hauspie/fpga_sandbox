@@ -8,7 +8,8 @@ TOP_MODULE=clock_divider
 
 VHDL=$(wildcard *.vhd)
 NGC=$(PROJECT:.prj=.ngc)
-UCF=$(PROJECT).ucf
+NGD=$(PROJECT:.prj=.ngd)
+UCF=$(PROJECT:.prj=.ucf)
 
 OUTPUT=$(PROJECT:.prj=.bit)
 
@@ -32,8 +33,9 @@ $(NGC): $(PROJECT)
 	echo "run -ifn $< -ofn $@ -p $(DEVICE) -opt_mode Speed -opt_level 1 -top $(TOP_MODULE)" | xst
 to_clean+=$(NGC) xst _xmsgs $(PROJECT:.prj=.ngc_xst.xrpt) $(VHDL:.vhd=.lso)
 
-%.ngd: $(UCF) $(NGC) 
+$(NGD): $(UCF) $(NGC) 
 	ngdbuild -p $(DEVICE) -uc $^
+to_clean+=$(NGD:.ngd=_ngdbuild.xrpt) $(NGD) $(NGD:.ngd=.bld) netlist.lst xlnx_auto_0_xdb
 
 %.ncd: %.ngd
 	map -detail -pr b $^
