@@ -53,8 +53,11 @@ $(NCD): $(NGD)
 	map -detail -pr b $^
 to_clean+=$(NCD) $(NCD:.ncd=.map) $(NCD:.ncd=.mrp) $(NCD:.ncd=.ngm) $(NCD:.ncd=.pcf) $(NCD:.ncd=_summary.xml) $(NCD:.ncd=_usage.xml) $(VHDL:.vhd=_map.xrpt)
 
-parout.ncd: counter.ncd
-	par counter.ncd parout.ncd counter.pcf
+# Place and route to fully route fpga design
+$(PAR_NCD): $(NCD)
+	par $^ $@ $(NCD:.ncd=.pcf)
+to_clean+=$(PAR_NCD) $(VHDL:.vhd=_par.xrpt) $(PAR_NCD:.ncd=.pad) $(PAR_NCD:.ncd=_pad.csv) $(PAR_NCD:.ncd=_pad.txt) $(PAR_NCD:.ncd=.par) $(PAR_NCD:.ncd=.ptwx) $(PAR_NCD:.ncd=.unroutes) $(PAR_NCD:.ncd=.xpi) par_usage_statistics.html
+
 counter.bit: parout.ncd
 	bitgen -g CRC:Enable -g StartUpClk:CClk -g Compress \
 	parout.ncd counter.bit counter.pcf
