@@ -6,7 +6,7 @@ http://www.dejazzer.com/ee478/
 * Installation des outils de développement
   Télécharger ISE 14.x sur le site de Xilinx et installer ISE Webpack
   Télécharger les plugins digilent for xilinx sur le site digilent
-     - Copier le .dll/.so et le .xml correspondant dans le répertoire $HOME/.cse
+  Installer adept de digilent
 * Tutoriaux pour la carte digilent (cours complet sur FPGA et VHDL)
   http://www.dejazzer.com/ee478/
 
