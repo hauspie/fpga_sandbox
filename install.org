@@ -10,3 +10,7 @@
   Family: Spartan 6
   Device: XC6SLX45
   Package: CSG324
+
+* FPGA Command line
+
+  http://www.demandperipherals.com/docs/CmdLineFPGA.pdf

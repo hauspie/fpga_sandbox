@@ -1,0 +1,5 @@
+
+# PlanAhead Generated physical constraints 
+
+NET "CK_IN" LOC = L15;
+NET "CK_OUT" LOC = U18;
