@@ -1,8 +1,3 @@
-Sorry for non french speaker, I will translate this asap.
-
-Note that the fourbit adder sample is not mine but borrowed from the course
-available on [2]
-
 Installing development tools for using the Digilent ATLYS board
 ===============================================================
 * Download and install Xilinx ISE Webpack
@@ -48,3 +43,9 @@ References
 * [2] http://www.dejazzer.com/ee478/
 * [3] http://www.demandperipherals.com/docs/CmdLineFPGA.pdf
 * [4] http://www.freerangefactory.org/dl/free_range_vhdl.pdf
+
+Acknowledgment
+==============
+The fourbit adder sample is not mine but borrowed from the course
+available on [2]
+
