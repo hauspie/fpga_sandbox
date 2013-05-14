@@ -3,3 +3,4 @@
 
 NET "CK_IN" LOC = L15;
 NET "CK_OUT" LOC = U18;
+NET "NCK_OUT" LOC = M14;
