@@ -1,22 +1,42 @@
+# The targeted device
 DEVICE=xc6slx45-3csg324
 
-PROGRAM=clock_divider
+# The project name, can be pretty much anything
+PROJECT=led_blink.prj
+# The name of the top module vhdl file
+TOP_MODULE=clock_divider
 
-VHDL=$(PROGRAM).vhd
-NGC=$(VHDL:.vhd=.ngc)
-UCF=$(PROGRAM).ucf
+VHDL=$(wildcard *.vhd)
+NGC=$(PROJECT:.prj=.ngc)
+UCF=$(PROJECT).ucf
 
-all: $(PROGRAM).bit
+OUTPUT=$(PROJECT:.prj=.bit)
 
-%.ngc: %.vhd
-	echo "run -ifn $< -ifmt VHDL -ofn $@ -p $(DEVICE) -opt_mode Speed -opt_level 1" | xst
+.PHONY: $(PROJECT)
+
+all: $(OUTPUT)
+
+
+# A project file is a list a vhdl files to process
+# For each vhdl file, the project file include the line
+# vhdl work "vhdl_file"
+$(PROJECT): $(VHDL)
+	@echo "Generating project file ($+)"
+	@echo -n '' > $@
+	@for src in $+; do echo "vhdl work \"$$src\"" >> $@ ; done
+to_clean+=$(PROJECT)
+
+# Synthesization step. VHDL files included in the project file will be synthesized 
+# to a netlist file with ngc extension
+$(NGC): $(PROJECT)
+	echo "run -ifn $< -ofn $@ -p $(DEVICE) -opt_mode Speed -opt_level 1 -top $(TOP_MODULE)" | xst
+to_clean+=$(NGC) xst _xmsgs $(PROJECT:.prj=.ngc_xst.xrpt) $(VHDL:.vhd=.lso)
 
 %.ngd: $(UCF) $(NGC) 
 	ngdbuild -p $(DEVICE) -uc $^
-counter.ncd: counter.ngd
-	map -k 6 -detail -pr b counter.ngd
-counter.pcf: counter.ngd
-	map -k 6 -detail -pr b counter.ngd
+
+%.ncd: %.ngd
+	map -detail -pr b $^
 parout.ncd: counter.ncd
 	par counter.ncd parout.ncd counter.pcf
 counter.bit: parout.ncd
@@ -28,11 +48,4 @@ install: counter.bin
 	stty --file=/dev/ttyUSB0 -opost # We want raw output
 	cat counter.bin > /dev/ttyUSB0
 clean:
-	rm -rf counter.bgn counter.bin counter.bit counter.bld \
-	counter.drc counter.map counter_map.xrpt counter.mrp \
-	counter.ncd counter.ngc counter.ngd counter_ngdbuild.xrpt \
-	counter.ngm counter_par.xrpt counter.pcf counter.prm \
-	counter_summary.xml counter_usage.xml counter_xst.xrpt \
-	netlist.lst parout.ncd parout.pad parout_pad.csv \
-	parout_pad.txt parout.par parout.ptwx parout.unroutes \
-	parout.xpi xlnx_auto_0.ise xlnx_auto_0_xdb xst
+	rm -rf $(to_clean)
