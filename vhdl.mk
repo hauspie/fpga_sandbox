@@ -19,12 +19,20 @@ NGD=$(PROJECT:.prj=.ngd)
 UCF=$(PROJECT:.prj=.ucf)
 NCD=$(PROJECT:.prj=.ncd)
 PAR_NCD=$(PROJECT:.prj=_par.ncd)
+SIM_EXE=$(PROJECT:.prj=.sim)
 
-
-.PHONY: clean mrproper
+.PHONY: clean mrproper sim program
 
 all: $(OUTPUT)
 
+sim: $(SIM_EXE)
+	./$(SIM_EXE)
+
+simui: $(SIM_EXE)
+	./$(SIM_EXE) -gui
+
+$(SIM_EXE): $(PROJECT)
+	fuse -prj $^ $(TOP_MODULE) -o $@
 
 # A project file is a list a vhdl files to process
 # For each vhdl file, the project file include the line
