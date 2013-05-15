@@ -34,7 +34,7 @@ variable:
 
 VHDL tutorials
 ==============
-As stated before, [1] is a full course on VHDL using lab exercices on Digilent board.
+As stated before, [2] is a full course on VHDL using lab exercices on Digilent board.
 [4] is a free book on designing hardware using VHDL.
 
 References
