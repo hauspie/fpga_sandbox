@@ -33,7 +33,7 @@ simui: $(SIM_EXE)
 
 $(SIM_EXE): $(PROJECT)
 	fuse -prj $^ $(TOP_MODULE) -o $@
-
+to_clean+=fuse.log fuseRelaunch.cmd fuse.xmsgs isim isim.log isim.wdb $(SIM_EXE)
 # A project file is a list a vhdl files to process
 # For each vhdl file, the project file include the line
 # vhdl work "vhdl_file"
